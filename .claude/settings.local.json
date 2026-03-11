@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod +x \"/Users/bhanucheryala/Desktop/PERSONAL/PERSONAL-DOCUMENTS/Resume APP/dev.sh\")",
+      "Bash(brew list:*)",
+      "Bash(mdfind:*)",
+      "Bash(/usr/libexec/java_home:*)",
+      "Bash(brew install:*)",
+      "Bash(colima start:*)",
+      "Bash(chmod +x:*)",
+      "Bash(gradle wrapper:*)",
+      "Bash(export:*)",
+      "Bash(curl:*)",
+      "Bash(lsof:*)",
+      "Bash(grep:*)",
+      "Bash(pdflatex:*)",
+      "Bash(docker info:*)",
+      "Bash(docker images:*)",
+      "Bash(java:*)",
+      "Bash(brew:*)",
+      "Bash(./gradlew build:*)"
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: latex-compiler-service
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/resumeai}
+    username: ${SPRING_DATASOURCE_USERNAME:resumeai}
+    password: ${SPRING_DATASOURCE_PASSWORD:resumeai_secret}
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: 6379
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    enabled: false  # we manage FreeMarker config manually
+
+aws:
+  region: ${AWS_REGION:us-east-1}
+  endpoint-override: ${AWS_ENDPOINT_OVERRIDE:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Design Tokens ──────────────────────────────────────────────────── */
+:root {
+  --acc:   #e94560;
+  --acc2:  #7c3aed;
+  --acc3:  #06b6d4;
+  --green: #10b981;
+  --yellow:#f59e0b;
+  --bg0:   #0a0a14;
+  --bg1:   #0f0f1e;
+  --bg2:   #14142a;
+  --bg3:   #1a1a36;
+  --line:  #22224a;
+  --text:  #e8e8f8;
+  --muted: #6b6b9a;
+}
+
+/* ─── Base Reset ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg0);
+  color: var(--text);
+  font-family: 'Inter', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg1); }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ─── Grid Background Pattern ────────────────────────────────────────────── */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(34,34,74,0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,34,74,0.4) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ─── Component Layer ────────────────────────────────────────────────────── */
+@layer components {
+
+  /* Card */
+  .card {
+    @apply bg-bg2 border border-line rounded-xl p-4;
+  }
+
+  /* Pill badge */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide;
+  }
+  .badge-acc  { @apply badge bg-acc/15 text-acc border border-acc/30; }
+  .badge-acc2 { @apply badge bg-acc2/15 text-acc2 border border-acc2/30; }
+  .badge-acc3 { @apply badge bg-acc3/15 text-acc3 border border-acc3/30; }
+  .badge-green{ @apply badge bg-success/15 text-success border border-success/30; }
+  .badge-warn { @apply badge bg-warn/15 text-warn border border-warn/30; }
+
+  /* Primary CTA button */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           bg-acc hover:bg-acc/85 active:bg-acc/70
+           text-white font-bold text-sm rounded-lg
+           transition-all duration-150 cursor-pointer select-none
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-3 py-2
+           bg-transparent hover:bg-bg3 active:bg-line
+           text-muted hover:text-text font-medium text-sm rounded-lg
+           transition-all duration-150 cursor-pointer select-none border border-line;
+  }
+
+  /* Accent border on left */
+  .panel-accent {
+    @apply border-l-2 border-acc pl-3;
+  }
+
+  /* Divider */
+  .divider {
+    @apply border-t border-line my-3;
+  }
+
+  /* Input */
+  .input {
+    @apply w-full bg-bg3 border border-line rounded-lg px-3 py-2
+           text-text placeholder:text-muted text-sm
+           focus:outline-none focus:border-acc3 transition-colors;
+  }
+
+  /* Textarea */
+  .textarea {
+    @apply input resize-none;
+  }
+
+  /* Tab button */
+  .tab {
+    @apply px-4 py-2 text-sm font-semibold text-muted
+           hover:text-text transition-colors cursor-pointer select-none
+           border-b-2 border-transparent;
+  }
+  .tab-active {
+    @apply text-acc border-b-2 border-acc;
+  }
+
+  /* Keyword chip */
+  .chip {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold
+           border transition-colors cursor-default;
+  }
+  .chip-match   { @apply chip bg-success/10 text-success border-success/30; }
+  .chip-missing { @apply chip bg-acc/10 text-acc border-acc/30; }
+}
+
+/* ─── Utility Layer ──────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, var(--acc), var(--acc2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow-acc {
+    box-shadow: 0 0 20px rgba(233,69,96,0.25);
+  }
+  .glow-acc2 {
+    box-shadow: 0 0 20px rgba(124,58,237,0.25);
+  }
+  .glow-acc3 {
+    box-shadow: 0 0 20px rgba(6,182,212,0.25);
+  }
+
+  /* Hide scrollbar but keep scrollable */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* ─── Monaco editor background fix ───────────────────────────────────────── */
+.monaco-editor { background: transparent !important; }
+.monaco-editor .margin { background: var(--bg2) !important; }

@@ -1,0 +1,162 @@
+version: '3.9'
+
+services:
+  # ─── PostgreSQL ───────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: resumeai_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: resumeai
+      POSTGRES_USER: resumeai
+      POSTGRES_PASSWORD: resumeai_secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U resumeai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redis ────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: resumeai_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── LocalStack (S3 + SQS emulation) ──────────────────────
+  localstack:
+    image: localstack/localstack:3
+    container_name: resumeai_localstack
+    restart: unless-stopped
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3,sqs,secretsmanager
+      DEFAULT_REGION: us-east-1
+      DOCKER_HOST: unix:///var/run/docker.sock
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./infra/localstack-init.sh:/etc/localstack/init/ready.d/init.sh
+
+  # ─── Resume Service ───────────────────────────────────────
+  resume-service:
+    build:
+      context: ./backend
+      dockerfile: resume-service/Dockerfile
+    container_name: resumeai_resume_service
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/resumeai
+      SPRING_DATASOURCE_USERNAME: resumeai
+      SPRING_DATASOURCE_PASSWORD: resumeai_secret
+      SPRING_REDIS_HOST: redis
+      AWS_ENDPOINT_OVERRIDE: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ─── AI Orchestrator Service ──────────────────────────────
+  ai-orchestrator-service:
+    build:
+      context: ./backend
+      dockerfile: ai-orchestrator-service/Dockerfile
+    container_name: resumeai_ai_service
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      SPRING_REDIS_HOST: redis
+      AWS_ENDPOINT_OVERRIDE: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # ─── LaTeX Compiler Service ───────────────────────────────
+  latex-compiler-service:
+    build:
+      context: ./backend
+      dockerfile: latex-compiler-service/Dockerfile
+    container_name: resumeai_latex_service
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/resumeai
+      SPRING_DATASOURCE_USERNAME: resumeai
+      SPRING_DATASOURCE_PASSWORD: resumeai_secret
+      SPRING_REDIS_HOST: redis
+      AWS_ENDPOINT_OVERRIDE: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ─── Auth Service ─────────────────────────────────────────
+  auth-service:
+    build:
+      context: ./backend
+      dockerfile: auth-service/Dockerfile
+    container_name: resumeai_auth_service
+    restart: unless-stopped
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/resumeai
+      SPRING_DATASOURCE_USERNAME: resumeai
+      SPRING_DATASOURCE_PASSWORD: resumeai_secret
+      JWT_SECRET: ${JWT_SECRET:-super_secret_dev_key_change_in_prod}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ─── Frontend ─────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: resumeai_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8081
+      VITE_AI_SERVICE_URL: http://localhost:8082
+      VITE_LATEX_SERVICE_URL: http://localhost:8083
+      VITE_AUTH_SERVICE_URL: http://localhost:8084
+    depends_on:
+      - resume-service
+      - ai-orchestrator-service
+
+volumes:
+  postgres_data:
+  redis_data:
+  localstack_data:

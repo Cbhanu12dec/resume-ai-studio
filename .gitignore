@@ -1,0 +1,47 @@
+# ─── Environment ───────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ─── Backend (Gradle / Java) ────────────────────────────────────────────────────
+backend/.gradle/
+backend/build/
+backend/**/build/
+backend/**/.gradle/
+*.class
+*.jar
+*.war
+*.ear
+!gradle/wrapper/gradle-wrapper.jar
+
+# ─── Frontend (Node / Vite) ────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# ─── IDE & OS ──────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ─── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Docker ────────────────────────────────────────────────────────────────────
+infra/data/
+infra/localstack-data/
+
+# ─── LaTeX output ──────────────────────────────────────────────────────────────
+*.pdf
+*.aux
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz

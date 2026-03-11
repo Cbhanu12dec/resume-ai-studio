@@ -1,0 +1,7 @@
+rootProject.name = 'resumeai-studio'
+
+include 'common'
+include 'resume-service'
+include 'ai-orchestrator-service'
+include 'auth-service'
+include 'latex-compiler-service'

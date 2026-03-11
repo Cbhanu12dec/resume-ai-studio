@@ -1,0 +1,18 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/resumeai}
+    username: ${SPRING_DATASOURCE_USERNAME:resumeai}
+    password: ${SPRING_DATASOURCE_PASSWORD:resumeai_secret}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: ${JWT_SECRET:super_secret_dev_key_change_in_prod_32chars}
+  access-token-expiry: 3600     # 1 hour in seconds
+  refresh-token-expiry: 604800  # 7 days in seconds

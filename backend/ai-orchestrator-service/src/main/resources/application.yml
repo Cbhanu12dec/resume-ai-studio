@@ -1,0 +1,34 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ai-orchestrator-service
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: 6379
+  codec:
+    max-in-memory-size: 26214400  # 25MB — needed to receive base64-encoded PDF payloads
+
+anthropic:
+  api-key: ${ANTHROPIC_API_KEY}
+  base-url: https://api.anthropic.com
+  api-version: 2023-06-01
+  model: claude-sonnet-4-20250514
+  max-tokens:
+    parse: 2048
+    edit: 8192
+    match: 2048
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
