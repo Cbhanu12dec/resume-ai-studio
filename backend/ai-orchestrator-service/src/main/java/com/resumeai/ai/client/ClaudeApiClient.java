@@ -25,10 +25,10 @@ public class ClaudeApiClient {
     @Value("${anthropic.model:claude-sonnet-4-20250514}")
     private String model;
 
-    @Value("${anthropic.max-tokens.parse:4096}")
+    @Value("${anthropic.max-tokens.parse:8192}")
     private int parseMaxTokens;
 
-    @Value("${anthropic.max-tokens.edit:8192}")
+    @Value("${anthropic.max-tokens.edit:16000}")
     private int editMaxTokens;
 
     @Value("${anthropic.max-tokens.match:2048}")

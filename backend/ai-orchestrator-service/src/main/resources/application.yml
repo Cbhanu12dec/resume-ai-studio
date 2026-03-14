@@ -23,8 +23,8 @@ anthropic:
   api-version: 2023-06-01
   model: claude-sonnet-4-20250514
   max-tokens:
-    parse: 2048
-    edit: 8192
+    parse: 8192
+    edit: 16000
     match: 2048
 
 management:
@@ -32,3 +32,7 @@ management:
     web:
       exposure:
         include: health,info,metrics
+
+logging:
+  level:
+    io.netty.resolver.dns.DnsServerAddressStreamProviders: OFF
