@@ -1,17 +1,18 @@
 import { useState, useRef } from 'react'
-import { useChatEdit, useMatchScore } from '@/hooks/useResume'
+import { useWebSocketChat } from '@/hooks/useWebSocketChat'
+import { useMatchScore } from '@/hooks/useResume'
 import { useChatStore } from '@/store/chatStore'
 import { useResumeStore } from '@/store/resumeStore'
 
 export default function ChatInput({ resumeId }) {
   const [value, setValue] = useState('')
   const textareaRef = useRef(null)
-  const chat = useChatEdit(resumeId)
+  const { sendMessage, isTyping } = useWebSocketChat(resumeId)
   const match = useMatchScore(resumeId)
-  const { addUserMessage, isTyping } = useChatStore()
+  const { addUserMessage } = useChatStore()
   const { setActiveTab } = useResumeStore()
 
-  const isPending = isTyping || chat.isPending || match.isPending
+  const isPending = isTyping || match.isPending
 
   const detectAndSendJd = (text) => {
     const jdIndicators = ['job description', 'responsibilities:', 'requirements:', 'qualifications:', 'about the role']
@@ -23,14 +24,13 @@ export default function ChatInput({ resumeId }) {
     if (!trimmed || isPending) return
     setValue('')
 
-    addUserMessage(trimmed)
-
     if (detectAndSendJd(trimmed)) {
+      addUserMessage(trimmed)
       match.mutate(trimmed, {
         onSuccess: () => setActiveTab('match'),
       })
     } else {
-      chat.mutate(trimmed)
+      sendMessage(trimmed)
     }
   }
 
@@ -43,7 +43,6 @@ export default function ChatInput({ resumeId }) {
 
   const handleInput = (e) => {
     setValue(e.target.value)
-    // Auto-resize
     const el = textareaRef.current
     if (el) {
       el.style.height = 'auto'

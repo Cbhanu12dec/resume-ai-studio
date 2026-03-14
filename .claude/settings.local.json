@@ -18,7 +18,10 @@
       "Bash(docker images:*)",
       "Bash(java:*)",
       "Bash(brew:*)",
-      "Bash(./gradlew build:*)"
+      "Bash(./gradlew build:*)",
+      "Bash(cd \"/Users/bhanucheryala/Desktop/PERSONAL/PERSONAL-DOCUMENTS/Resume APP/backend\" && ./gradlew :resume-service:compileJava :ai-orchestrator-service:compileJava 2>&1 | tail -60)",
+      "Bash(cd \"/Users/bhanucheryala/Desktop/PERSONAL/PERSONAL-DOCUMENTS/Resume APP/backend\" && ./gradlew :resume-service:compileJava :ai-orchestrator-service:compileJava 2>&1 | tail -40)",
+      "Bash(cd \"/Users/bhanucheryala/Desktop/PERSONAL/PERSONAL-DOCUMENTS/Resume APP/backend\" && ./gradlew :resume-service:compileJava 2>&1 | tail -20)"
     ]
   }
 }

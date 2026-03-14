@@ -17,4 +17,6 @@ public class EditRequest {
     @NotBlank
     private String message;
     private List<Map<String, String>> history;
+    /** "EDIT_RESUME" or "CHAT_ONLY" — defaults to EDIT_RESUME in service if null */
+    private String intent;
 }

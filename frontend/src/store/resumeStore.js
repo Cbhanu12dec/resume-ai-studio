@@ -7,7 +7,7 @@ export const useResumeStore = create((set, get) => ({
   parsedData: null,
 
   // UI state
-  activeTab: 'latex',   // 'latex' | 'preview' | 'match' | 'parsed'
+  activeTab: 'latex',   // 'latex' | 'match' | 'parsed'
   isSaving: false,
   isCompiling: false,
 

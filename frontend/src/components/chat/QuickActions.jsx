@@ -1,4 +1,4 @@
-import { useChatEdit } from '@/hooks/useResume'
+import { useWebSocketChat } from '@/hooks/useWebSocketChat'
 import { useChatStore } from '@/store/chatStore'
 
 const ACTIONS = [
@@ -10,13 +10,11 @@ const ACTIONS = [
 ]
 
 export default function QuickActions({ resumeId }) {
-  const chat = useChatEdit(resumeId)
-  const { addUserMessage, isTyping } = useChatStore()
+  const { sendMessage, isTyping } = useWebSocketChat(resumeId)
 
   const handleAction = (prompt) => {
-    if (isTyping || chat.isPending) return
-    addUserMessage(prompt)
-    chat.mutate(prompt)
+    if (isTyping) return
+    sendMessage(prompt)
   }
 
   return (
@@ -26,7 +24,7 @@ export default function QuickActions({ resumeId }) {
           <button
             key={a.label}
             onClick={() => handleAction(a.prompt)}
-            disabled={isTyping || chat.isPending}
+            disabled={isTyping}
             className="px-2 py-1 bg-bg3 hover:bg-line text-muted hover:text-text text-xs rounded border border-line hover:border-acc/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {a.label}
