@@ -46,7 +46,6 @@ public class Resume {
     private ParsedResumeData parsedData;
 
     @Column(columnDefinition = "TEXT")
-    @Lob
     private String latexSource;
 
     @Enumerated(EnumType.STRING)

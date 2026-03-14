@@ -1,9 +1,11 @@
 package com.resumeai.ai.service;
 
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resumeai.ai.client.ClaudeApiClient;
 import com.resumeai.ai.dto.*;
 import com.resumeai.common.dto.ParsedResumeData;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,15 @@ public class AiOrchestratorService {
 
     private final ClaudeApiClient claudeApiClient;
     private final ObjectMapper objectMapper;
+
+    /** Lenient mapper that tolerates backslash-escaped characters Claude puts in LaTeX strings */
+    private ObjectMapper lenientMapper;
+
+    @PostConstruct
+    void init() {
+        lenientMapper = objectMapper.copy()
+                .configure(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature(), true);
+    }
 
     public Mono<ParseResponse> parseResume(ParseRequest request) {
         byte[] fileBytes = Base64.getDecoder().decode(request.getFileBase64());
@@ -45,7 +56,7 @@ public class AiOrchestratorService {
                 .map(response -> {
                     String json = stripMarkdown(response.getTextContent());
                     try {
-                        var map = objectMapper.readValue(json, Map.class);
+                        var map = lenientMapper.readValue(json, Map.class);
                         ParsedResumeData updatedParsed = objectMapper.convertValue(
                                 map.get("updated_parsed"), ParsedResumeData.class);
                         return EditResponse.builder()
@@ -172,7 +183,7 @@ public class AiOrchestratorService {
         if (hadEdit && rawJson != null && !rawJson.isBlank()) {
             try {
                 String trimmed = stripMarkdown(rawJson.trim());
-                var map = objectMapper.readValue(trimmed, Map.class);
+                var map = lenientMapper.readValue(trimmed, Map.class);
                 ParsedResumeData updatedParsed = objectMapper.convertValue(
                         map.get("updated_parsed"), ParsedResumeData.class);
                 String updatedLatex = (String) map.get("updated_latex");

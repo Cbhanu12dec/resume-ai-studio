@@ -29,7 +29,6 @@ public class ResumeVersion {
     private Integer versionNumber;
 
     @Column(columnDefinition = "TEXT")
-    @Lob
     private String latexSource;
 
     @Column
